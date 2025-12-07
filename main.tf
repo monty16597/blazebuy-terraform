@@ -1,34 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.0"
-    }
-  }
-
-  backend "s3" {
-    bucket       = "opsfabric-terraform-states"
-    key          = "blazebuy/terraform.tfstate"
-    region       = "ca-central-1"
-    use_lockfile = true
-    profile      = "vaishal"
-  }
-}
-
-provider "aws" {
-  region  = var.region
-  profile = "vaishal"
-}
-
-# --- Variables ---
-variable "project_name" {
-  default = "blazebuy"
-}
-
-variable "region" {
-  default = "us-east-1"
-}
-
 # --- Data Sources ---
 data "aws_vpc" "default" {
   default = true
@@ -40,7 +9,6 @@ data "aws_subnets" "public" {
     values = [data.aws_vpc.default.id]
   }
 }
-
 
 locals {
   prefix = var.project_name
@@ -136,7 +104,8 @@ resource "aws_iam_policy" "dynamo_policy" {
           "dynamodb:Query",
           "dynamodb:Scan",
           "dynamodb:DescribeTable",
-          "dynamodb:CreateTable"
+          "dynamodb:CreateTable",
+          "dynamodb:ListTables"
         ]
         Effect   = "Allow"
         Resource = "*"
