@@ -105,6 +105,7 @@ resource "aws_iam_policy" "dynamo_policy" {
           "dynamodb:Scan",
           "dynamodb:DescribeTable",
           "dynamodb:CreateTable",
+          "dynamodb:ListTables"
         ]
         Effect   = "Allow"
         Resource = "*"
@@ -176,7 +177,7 @@ resource "aws_ecs_task_definition" "app" {
     {
       name = "${local.prefix}-container"
       # UPDATED: Pulling directly from your Public Docker Hub
-      image     = "skyli997/blazebuy:v1.0.7"
+      image     = "skyli997/blazebuy:v1.0.8"
       essential = true
       portMappings = [
         {
