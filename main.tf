@@ -105,7 +105,6 @@ resource "aws_iam_policy" "dynamo_policy" {
           "dynamodb:Scan",
           "dynamodb:DescribeTable",
           "dynamodb:CreateTable",
-          "dynamodb:ListTables"
         ]
         Effect   = "Allow"
         Resource = "*"
@@ -174,7 +173,7 @@ resource "aws_ecs_task_definition" "app" {
     {
       name = "${local.prefix}-container"
       # UPDATED: Pulling directly from your Public Docker Hub
-      image     = "skyli997/blazebuy:v1.0.0"
+      image     = "skyli997/blazebuy:v1.0.3"
       essential = true
       portMappings = [
         {
@@ -184,8 +183,6 @@ resource "aws_ecs_task_definition" "app" {
       ]
       environment = [
         { name = "AWS_DEFAULT_REGION", value = var.region },
-        # Important: Tell the app where real DynamoDB is
-        { name = "DYNAMODB_ENDPOINT", value = "https://dynamodb.${var.region}.amazonaws.com" }
       ]
       logConfiguration = {
         logDriver = "awslogs"
