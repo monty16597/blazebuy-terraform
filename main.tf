@@ -42,8 +42,8 @@ resource "aws_security_group" "ecs_sg" {
 
   ingress {
     description     = "Traffic from ALB"
-    from_port       = 5000
-    to_port         = 5000
+    from_port       = 5001
+    to_port         = 5001
     protocol        = "tcp"
     security_groups = [aws_security_group.alb_sg.id]
   }
@@ -128,14 +128,17 @@ resource "aws_lb" "main" {
 }
 
 resource "aws_lb_target_group" "main" {
-  name        = "${local.prefix}-tg"
-  port        = 5000
+  lifecycle {
+    create_before_destroy = true
+  }
+  name        = "${local.prefix}-tg2"
+  port        = 5001
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.default.id
   target_type = "ip"
 
   health_check {
-    path    = "/login"
+    path    = "/health"
     matcher = "200,302"
   }
 }
@@ -173,12 +176,12 @@ resource "aws_ecs_task_definition" "app" {
     {
       name = "${local.prefix}-container"
       # UPDATED: Pulling directly from your Public Docker Hub
-      image     = "skyli997/blazebuy:v1.0.3"
+      image     = "skyli997/blazebuy:v1.0.5"
       essential = true
       portMappings = [
         {
-          containerPort = 5000
-          hostPort      = 5000
+          containerPort = 5001
+          hostPort      = 5001
         }
       ]
       environment = [
@@ -213,7 +216,7 @@ resource "aws_ecs_service" "main" {
   load_balancer {
     target_group_arn = aws_lb_target_group.main.arn
     container_name   = "${local.prefix}-container"
-    container_port   = 5000
+    container_port   = 5001
   }
 
   depends_on = [aws_lb_listener.front_end]
