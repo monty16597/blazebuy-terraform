@@ -104,8 +104,7 @@ resource "aws_iam_policy" "dynamo_policy" {
           "dynamodb:Query",
           "dynamodb:Scan",
           "dynamodb:DescribeTable",
-          "dynamodb:CreateTable",
-          "dynamodb:ListTables"
+          "dynamodb:CreateTable"
         ]
         Effect   = "Allow"
         Resource = "*"
