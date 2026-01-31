@@ -176,7 +176,7 @@ resource "aws_ecs_task_definition" "app" {
     {
       name = "${local.prefix}-container"
       # UPDATED: Pulling directly from your Public Docker Hub
-      image     = "vaishal123/blazebuy:v1.0.0"
+      image     = "vaishal123/blazebuy:v3.0.0"
       essential = true
       portMappings = [
         {
